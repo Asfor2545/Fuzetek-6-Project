@@ -138,7 +138,6 @@ public:
     void getMove(int& row, int& col, const Board& board) override {
         cout << name << "'s turn (" << symbol << "). Enter row and col (1-3): ";
         cin >> row >> col;
-        // Adjust to 0-based indexing for the Board array
         row--; 
         col--;
     }
@@ -193,7 +192,7 @@ public:
         bool programRunning = true;
     
     while (programRunning) {
-        showMenu(); // From previous story
+        showMenu(); 
         int choice;
         cin >> choice;
 
@@ -217,7 +216,6 @@ public:
             board.display();
             int row, col;
             
-            // If the current player is AI, pass the board context for move calculation
             AIPlayer* ai = dynamic_cast<AIPlayer*>(currentPlayer);
             if (ai) {
                 ai->setBoard(&board);
@@ -227,7 +225,7 @@ public:
             currentPlayer->getMove(row, col, board);
 
             if (board.makeMove(row, col, currentPlayer->getSymbol())) {
-                if (checkGameEnd()) { // checkGameEnd() handles win/draw output
+                if (checkGameEnd()) { 
                     board.display();
                     matchActive = false;
                 } else {
@@ -244,7 +242,7 @@ public:
         if (tolower(replay) != 'y') {
             programRunning = false;
         } else {
-            resetGame(); // Clears board for the next game loop
+            resetGame(); 
         }
     }
     }
