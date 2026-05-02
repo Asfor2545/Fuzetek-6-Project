@@ -30,13 +30,19 @@ public:
         // TO DO: Implement a function to display the board
     }
 
-    bool isValidMove(int row, int col) const {
-        // TO DO: Implement a function to check if a move is valid (within bounds and on an empty cell)
+    bool Board::isValidMove(int row, int col) const{
+        if (row < 0 || row >= size || col < 0 || col >= size) return false;
+        return grid[row][col] == ' ';
     }
 
-    bool makeMove(int row, int col, char symbol) {
-        // TO DO: Implement a function to place a player's mark on the board
+    bool Board::makeMove(int row, int col, char symbol){
+        if (isValidMove(row, col)){
+            grid[row][col] = symbol;
+            return true;
+        }
+        return false;
     }
+
     bool checkWin(char symbol) const {
         // TO DO: Implement a function to check if the specified player has won
     }
@@ -67,7 +73,7 @@ private:
     int minimax(Board tempBoard, int depth, bool isMaximizing) const {
     int score = evaluateBoard(tempBoard);
 
-    if (score == 10) return score - depth; 
+    if (score == 10) return score - depth;
     if (score == -10) return score + depth;
     if (tempBoard.isFull()) return 0;
 
@@ -90,7 +96,7 @@ private:
         for (int i = 0; i < tempBoard.getSize(); i++) {
             for (int j = 0; j < tempBoard.getSize(); j++) {
                 if (tempBoard.isValidMove(i, j)) {
-                    Board nextBoard = tempBoard; 
+                    Board nextBoard = tempBoard;
                     nextBoard.makeMove(i, j, opponentSymbol);
                     best = min(best, minimax(nextBoard, depth + 1, !isMaximizing));
                 }
@@ -126,8 +132,11 @@ public:
         // TO DO: Implement the Minimax algorithm to evaluate the best move for the AI
     }
 
-    int evaluateBoard(const Board& board) const {
-        // TO DO: Implement a function to evaluate the board state and return a score for the Minimax algorithm
+    int evaluateBoard(const Board& board) const{
+        if (board.checkWin(symbol)) return 10;
+        char opponentSymbol = (symbol == 'X') ? 'O' : 'X';
+        if (board.checkWin(opponentSymbol)) return -10;
+        return 0;
     }
 };
 
@@ -138,7 +147,7 @@ public:
     void getMove(int& row, int& col, const Board& board) override {
         cout << name << "'s turn (" << symbol << "). Enter row and col (1-3): ";
         cin >> row >> col;
-        row--; 
+        row--;
         col--;
     }
 };
@@ -190,9 +199,9 @@ public:
     }
     void start(){
         bool programRunning = true;
-    
+
     while (programRunning) {
-        showMenu(); 
+        showMenu();
         int choice;
         cin >> choice;
 
@@ -205,7 +214,7 @@ public:
         } else if (choice == 4) {
             cout << "Exiting game...\n";
             programRunning = false;
-            continue; 
+            continue;
         } else {
             cout << "Invalid selection. Please try again.\n";
             continue;
@@ -215,7 +224,7 @@ public:
         while (matchActive) {
             board.display();
             int row, col;
-            
+
             AIPlayer* ai = dynamic_cast<AIPlayer*>(currentPlayer);
             if (ai) {
                 ai->setBoard(&board);
@@ -225,7 +234,7 @@ public:
             currentPlayer->getMove(row, col, board);
 
             if (board.makeMove(row, col, currentPlayer->getSymbol())) {
-                if (checkGameEnd()) { 
+                if (checkGameEnd()) {
                     board.display();
                     matchActive = false;
                 } else {
@@ -235,14 +244,14 @@ public:
                 cout << "Invalid move. Cell is occupied or out of bounds. Try again.\n";
             }
         }
-        
+
         char replay;
         cout << "Play again? (y/n): ";
         cin >> replay;
         if (tolower(replay) != 'y') {
             programRunning = false;
         } else {
-            resetGame(); 
+            resetGame();
         }
     }
     }
